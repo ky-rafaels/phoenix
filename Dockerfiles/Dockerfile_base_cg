@@ -1,0 +1,54 @@
+# base image
+FROM cgr.dev/ky-rafaels.example.com/python:3.9-dev
+
+# for easy upgrade later. ARG variables only persist during image build time
+ARG PHX_VER="2.0.0"
+# metadata
+LABEL base.image="cgr.dev/ky-rafaels.example.com/python:3.9-dev"
+LABEL dockerfile.version="2"
+LABEL software="PhoeNIx"
+LABEL software.version="v2.0.0"
+LABEL description="Basic Linux for Running PHoeNIx bash scripts"
+LABEL website="https://github.com/cdcgov/phoenix"
+LABEL license="Apache 2.0"
+# LABEL maintainer="Jill Hagey"
+# LABEL maintainer.email="qpk9@cdc.gov"
+
+USER root
+
+# install dependencies (pigz needed for nf-core modules, bc and rsync needed for post gamma steps in PHoeNIx)
+RUN apk add --no-cache \
+    readline-dev \
+    llvm \ 
+    ncurses-dev \
+    busybox \
+    # libncursesw5-dev \
+    tk-dev \ 
+    # liblzma-dev \
+    bc \ 
+    pigz \
+    rsync \
+    unzip \
+    # tar \
+    gzip 
+    # apt-get autoclean && \
+    # rm -rf /var/lib/apt/lists/*
+
+# ENV PATH=/pyenv/bin:/pyenv/shims:${PATH}
+
+#install biopython and other required modules
+RUN pip3 install biopython \
+    glob2 \
+    argparse \
+    unidecode \
+    pandas \
+    numpy \
+    regex \
+    times \
+    xlsxwriter \
+    # cryptography==36.0.2 \
+    cryptography \
+    pytest-shutil \
+    openpyxl 
+
+USER nonroot
