@@ -30,6 +30,7 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     llvm \
     libncurses5-dev \
     libncursesw5-dev \
+    git \
     xz-utils \
     tk-dev \
     libffi-dev \
