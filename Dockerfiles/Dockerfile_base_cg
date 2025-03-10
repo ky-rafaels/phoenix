@@ -1,18 +1,10 @@
 # base image
-FROM cgr.dev/ky-rafaels.example.com/python:3.9-dev
+FROM cgr.dev/ky-rafaels.example.com/python:3.11-dev AS builder
 
 # for easy upgrade later. ARG variables only persist during image build time
 ARG PHX_VER="2.0.0"
-# metadata
-LABEL base.image="cgr.dev/ky-rafaels.example.com/python:3.9-dev"
-LABEL dockerfile.version="2"
-LABEL software="PhoeNIx"
-LABEL software.version="v2.0.0"
-LABEL description="Basic Linux for Running PHoeNIx bash scripts"
-LABEL website="https://github.com/cdcgov/phoenix"
-LABEL license="Apache 2.0"
-# LABEL maintainer="Jill Hagey"
-# LABEL maintainer.email="qpk9@cdc.gov"
+
+WORKDIR /app
 
 USER root
 
@@ -22,7 +14,6 @@ RUN apk add --no-cache \
     llvm \ 
     ncurses-dev \
     busybox \
-    # libncursesw5-dev \
     tk-dev \ 
     # liblzma-dev \
     bc \ 
@@ -31,13 +22,9 @@ RUN apk add --no-cache \
     unzip \
     # tar \
     gzip 
-    # apt-get autoclean && \
-    # rm -rf /var/lib/apt/lists/*
-
-# ENV PATH=/pyenv/bin:/pyenv/shims:${PATH}
 
 #install biopython and other required modules
-RUN pip3 install biopython \
+RUN pip3 install --no-cache-dir biopython \
     glob2 \
     argparse \
     unidecode \
@@ -49,6 +36,24 @@ RUN pip3 install biopython \
     # cryptography==36.0.2 \
     cryptography \
     pytest-shutil \
-    openpyxl 
+    openpyxl --target=/app/deps
 
-USER nonroot
+FROM cgr.dev/ky-rafaels.example.com/python:3.11-dev 
+
+ARG PHX_VER="2.0.0"
+
+LABEL base.image="cgr.dev/ky-rafaels.example.com/python:3.11-dev"
+LABEL dockerfile.version="2"
+LABEL software="PhoeNIx"
+LABEL software.version="v2.0.0"
+LABEL description="Basic Linux for Running PHoeNIx bash scripts"
+LABEL website="https://github.com/cdcgov/phoenix"
+LABEL license="Apache 2.0"
+LABEL maintainer="Kyle Rafaels"
+LABEL maintainer.email="kyle.rafaels@chainguard.dev"
+
+WORKDIR /app
+
+COPY --from=builder /app/deps /app/deps
+
+ENV PYTHONPATH=/app/deps
