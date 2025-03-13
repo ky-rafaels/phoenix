@@ -1,4 +1,4 @@
-FROM cgr.dev/ky-rafaels.example.com/python:3.11-dev AS builder
+FROM cgr.dev/ky-rafaels.example.com/python:3.12-dev AS builder
 
 WORKDIR /app
 
@@ -31,7 +31,7 @@ RUN pip3 install --no-cache-dir biopython \
     pytest-shutil \
     openpyxl --target=/app/deps
 
-FROM cgr.dev/ky-rafaels.example.com/python:3.11
+FROM cgr.dev/ky-rafaels.example.com/python:3.12
 
 ARG PHX_VER="2.0.0"
 
