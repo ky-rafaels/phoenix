@@ -1,29 +1,22 @@
-# base image
-FROM cgr.dev/ky-rafaels.example.com/python:3.11-dev AS builder
-
-# for easy upgrade later. ARG variables only persist during image build time
-ARG PHX_VER="2.0.0"
+FROM cgr.dev/ky-rafaels.example.com/python:3.12-dev AS builder
 
 WORKDIR /app
 
 USER root
 
-# install dependencies (pigz needed for nf-core modules, bc and rsync needed for post gamma steps in PHoeNIx)
 RUN apk add --no-cache \
     readline-dev \
     llvm \ 
     ncurses-dev \
     busybox \
     tk-dev \ 
-    # liblzma-dev \
+    xz-dev \
     bc \ 
     pigz \
     rsync \
     unzip \
-    # tar \
     gzip 
 
-#install biopython and other required modules
 RUN pip3 install --no-cache-dir biopython \
     glob2 \
     argparse \
@@ -38,7 +31,7 @@ RUN pip3 install --no-cache-dir biopython \
     pytest-shutil \
     openpyxl --target=/app/deps
 
-FROM cgr.dev/ky-rafaels.example.com/python:3.11
+FROM cgr.dev/ky-rafaels.example.com/python:3.12
 
 ARG PHX_VER="2.0.0"
 
